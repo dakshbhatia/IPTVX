@@ -43,9 +43,9 @@
                     }
                 }
             } header: {
-                Text("Lume")
+                Text("IPTVX")
             } footer: {
-                Text("Lume is free, open-source software, licensed under the GNU Affero General Public License v3.")
+                Text("IPTVX is free, open-source software, licensed under the GNU Affero General Public License v3.")
             }
         }
 
@@ -57,7 +57,7 @@
             } header: {
                 Text("Open Source")
             } footer: {
-                Text("Lume's playback engines build on these open-source projects. Each remains under its own license.")
+                Text("IPTVX's playback engines build on these open-source projects. Each remains under its own license.")
             }
         }
 

@@ -111,7 +111,7 @@ nonisolated struct TraktClient {
             "refresh_token": refreshToken,
             "client_id": clientID,
             "client_secret": clientSecret,
-            "redirect_uri": "lume://oauth",
+            "redirect_uri": "iptvx://oauth",
             "grant_type": "refresh_token"
         ]
         return try await post("/oauth/token", body: body, authorized: false)

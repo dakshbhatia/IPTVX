@@ -100,7 +100,7 @@ extension SettingsView {
                                 .font(.title3)
                                 .frame(width: 30)
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Unlock Lume Pro")
+                                Text("Unlock IPTVX Pro")
                                     .foregroundStyle(.primary)
                                 Text("Free plan · See what's included")
                                     .font(.caption)
@@ -118,7 +118,7 @@ extension SettingsView {
                 // Not "Subscription" — lifetime owners see this section too, and
                 // labelling a one-time purchase a subscription is what sent people
                 // hunting for a cancel button that couldn't exist.
-                Text("Lume Pro")
+                Text("IPTVX Pro")
             }
         }
 
@@ -165,7 +165,7 @@ extension SettingsView {
                             .background(.tint.opacity(0.12), in: .rect(cornerRadius: 14, style: .continuous))
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(premium.isPremium ? "Lume Pro" : "Free Plan")
+                            Text(premium.isPremium ? "IPTVX Pro" : "Free Plan")
                                 .font(.system(size: 26, weight: .semibold))
                             Text(premium.isPremium
                                 ? premiumStatusDetail

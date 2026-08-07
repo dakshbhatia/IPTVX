@@ -19,7 +19,7 @@ import Foundation
 import Security
 
 enum ParentalControlsStore {
-    private static let service = "bilipp.Lume.parental"
+    private static let service = "dakshbhatia.IPTVX.parental"
     private static let account = "pin-hash"
     /// Mixed into the hash. Not a secret (it ships in the binary); it only stops
     /// the stored value from being a bare SHA-256 of a four-digit PIN.

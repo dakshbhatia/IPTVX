@@ -207,7 +207,7 @@ struct SettingsView: View {
                 } else if premium.isPremium {
                     Text("\(playlists.count) playlist\(playlists.count == 1 ? "" : "s")")
                 } else {
-                    Text("Free includes one playlist. Upgrade to Lume Pro to add more.")
+                    Text("Free includes one playlist. Upgrade to IPTVX Pro to add more.")
                 }
             }
         }
@@ -362,7 +362,7 @@ struct SettingsView: View {
             } header: {
                 Text("Player")
             } footer: {
-                Text("Lume plays each stream with your preferred engine and falls back to the next if it can't be played. Streams open in the selected external app instead, when one is installed.")
+                Text("IPTVX plays each stream with your preferred engine and falls back to the next if it can't be played. Streams open in the selected external app instead, when one is installed.")
             }
         }
 

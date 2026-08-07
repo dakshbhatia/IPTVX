@@ -34,7 +34,7 @@ extension SettingsView {
                 }
                 if let url = SupportInfo.appStoreReviewURL {
                     Link(destination: url) {
-                        Label("Rate Lume", systemImage: "star")
+                        Label("Rate IPTVX", systemImage: "star")
                     }
                 }
             } header: {
@@ -56,7 +56,7 @@ extension SettingsView {
                         .background(.tint.opacity(0.1), in: .rect(cornerRadius: 6))
 
                     VStack(alignment: .leading, spacing: 1) {
-                        Text("Lume")
+                        Text("IPTVX")
                         Text("Version \(SupportInfo.appVersion)")
                             .font(.caption)
                             .foregroundStyle(.secondary)

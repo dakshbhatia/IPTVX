@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src=".github/assets/lume-banner.png" alt="Lume" width="640">
+<img src=".github/assets/lume-banner.png" alt="IPTVX" width="640">
 
-### A modern, native IPTV player for Apple platforms
+### IPTVX — a modern, native IPTV player for Apple platforms
 
 Browse, search, and stream your Xtream Codes or **M3U/M3U8** playlists with a clean SwiftUI interface — Live TV, Movies, and Series, enriched with metadata, EPG, and watch progress that follows you across your devices.
 
@@ -52,7 +52,7 @@ Browse, search, and stream your Xtream Codes or **M3U/M3U8** playlists with a cl
 
 ## Overview
 
-**Lume** is a native IPTV client for the Apple ecosystem. It connects to your own
+**IPTVX** is a native IPTV client for the Apple ecosystem, forked from [Lume](https://github.com/bilipp/Lume). It connects to your own
 **Xtream Codes** provider or imports **M3U/M3U8** playlists, indexes the full catalog
 locally with **SwiftData** for instant, offline-capable browsing, and plays everything
 through a choice of four playback engines — from VLC's universal codec support to
@@ -64,7 +64,7 @@ runs on iPhone, iPad, Mac, Apple TV, and Apple Vision Pro. Content is enriched w
 artwork, cast, trailers, and ratings from **TMDB** and **MDBList** (IMDb, Rotten Tomatoes,
 Metacritic, Trakt, Letterboxd), and your viewing activity can be scrobbled to **Trakt**.
 
-> **Note** — Lume is a player only. It ships with **no channels, streams, or content**
+> **Note** — IPTVX is a player only. It ships with **no channels, streams, or content**
 > of its own. You bring your own Xtream Codes credentials or M3U playlist from a
 > provider you are entitled to use. We do not condone piracy — please read the
 > [**Anti-Piracy Policy**](ANTI_PIRACY.md).
@@ -147,7 +147,7 @@ adapted per size class
 - Configurable sort options per category and content type
 - Hide and reorder categories to taste
 - Favorites and watched markers across every content type
-- **Deep links** — open a title straight from a URL: `lume://movie/{tmdbId}` and `lume://series/{tmdbId}`
+- **Deep links** — open a title straight from a URL: `iptvx://movie/{tmdbId}` and `iptvx://series/{tmdbId}`
 
 #### ⏱️ Watch tracking
 - Automatic resume playback and progress tracking
@@ -329,9 +329,9 @@ cd ../Lume
 open Lume.xcodeproj
 ```
 
-Select the **Lume** scheme and a target destination (iPhone, Mac, Apple TV, or Vision
+Select the **IPTVX** scheme and a target destination (iPhone, Mac, Apple TV, or Vision
 Pro), then build and run (`⌘R`). On first launch, sign in with your Xtream credentials
-or import an M3U playlist, and Lume will sync your catalog.
+or import an M3U playlist, and IPTVX will sync your catalog.
 
 > Remote dependencies (KSPlayer, FFmpegKit, VLCKit) are resolved automatically by Swift
 > Package Manager on first build.
@@ -342,11 +342,12 @@ or import an M3U playlist, and Lume will sync your catalog.
 > the slices for the platforms you target — one `macos-arm64` slice is enough for a Mac
 > build, `ios-arm64` / `tvos-arm64` for device builds.
 
-**Code signing.** The project ships with the maintainer's Development Team
-(`DEVELOPMENT_TEAM`) and bundle identifier (`com.bilipp.lume`). Simulator builds run as
-is. To run on a physical device, open **Signing & Capabilities** for each target and set
-your own team (and, if needed, a unique bundle identifier) — or clear the team for a
-simulator-only build. Don't commit these personal signing changes back to the repo.
+**Code signing.** IPTVX uses the bundle identifier `com.dakshbhatia.iptvx` and leaves
+the Development Team unset so Xcode can use your signing identity. For a physical
+device, open **Signing & Capabilities** and choose your Apple Developer team. The
+default **Sideload** configuration disables CloudKit and unlocks the open-source build
+locally; configure the `iCloud.dakshbhatia.IPTVX` container before distributing a
+CloudKit-enabled release.
 
 ---
 

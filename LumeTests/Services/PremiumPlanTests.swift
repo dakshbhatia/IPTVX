@@ -22,9 +22,9 @@ struct PremiumPlanTests {
     /// `Product.products(for:)` silently returns fewer products and the paywall
     /// renders a spinner forever.
     @Test func `product ids match app store connect`() {
-        #expect(PremiumManager.Plan.monthly.rawValue == "com.bilipp.lume.pro.monthly")
-        #expect(PremiumManager.Plan.lifetime.rawValue == "com.bilipp.lume.premium.lifetime")
-        #expect(PremiumManager.Plan.retiredMonthly.rawValue == "com.bilipp.lume.premium.monthly")
+        #expect(PremiumManager.Plan.monthly.rawValue == "com.dakshbhatia.iptvx.pro.monthly")
+        #expect(PremiumManager.Plan.lifetime.rawValue == "com.dakshbhatia.iptvx.premium.lifetime")
+        #expect(PremiumManager.Plan.retiredMonthly.rawValue == "com.dakshbhatia.iptvx.premium.monthly")
     }
 
     /// The retired non-consumable must never be offered again, and the paywall lists

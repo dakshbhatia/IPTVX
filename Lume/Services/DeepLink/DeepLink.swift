@@ -2,13 +2,13 @@
 //  DeepLink.swift
 //  Lume
 //
-//  Custom URL-scheme deep links. `lume://movie/{tmdbId}` and
-//  `lume://series/{tmdbId}` open a title's detail screen directly.
+//  Custom URL-scheme deep links. `iptvx://movie/{tmdbId}` and
+//  `iptvx://series/{tmdbId}` open a title's detail screen directly.
 //
 
 import Foundation
 
-/// A parsed `lume://` deep link. Parsing is pure (it never touches the catalog)
+/// A parsed `iptvx://` deep link. Parsing is pure (it never touches the catalog)
 /// so it can be unit-tested in isolation; resolving the link to a catalog item
 /// and driving navigation happens in `MainTabView`.
 nonisolated enum DeepLink: Equatable {
@@ -16,13 +16,13 @@ nonisolated enum DeepLink: Equatable {
     case series(tmdbId: Int)
 
     /// The app's registered URL scheme (see `CFBundleURLTypes` in Info.plist).
-    static let scheme = "lume"
+    static let scheme = "iptvx"
 
-    /// Parses `lume://movie/{tmdbId}` and `lume://series/{tmdbId}`. Returns nil
+    /// Parses `iptvx://movie/{tmdbId}` and `iptvx://series/{tmdbId}`. Returns nil
     /// for any other scheme, an unknown kind, or a non-numeric id.
     init?(url: URL) {
         guard url.scheme?.lowercased() == Self.scheme else { return nil }
-        // For `lume://movie/123` the kind is the host and the id is the first
+        // For `iptvx://movie/123` the kind is the host and the id is the first
         // path component; `pathComponents` includes the leading "/".
         guard let idComponent = url.pathComponents.first(where: { $0 != "/" }),
               let tmdbId = Int(idComponent)

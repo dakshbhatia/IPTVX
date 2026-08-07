@@ -56,7 +56,7 @@ struct ManageProfilesView: View {
                 }
             } footer: {
                 if !premium.isPremium {
-                    Text("Free includes one profile. Upgrade to Lume Pro for the whole household.")
+                    Text("Free includes one profile. Upgrade to IPTVX Pro for the whole household.")
                 }
             }
 

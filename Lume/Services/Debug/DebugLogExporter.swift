@@ -66,7 +66,7 @@ nonisolated struct DebugLogExporter {
     /// inbox can tell submissions apart.
     func writeReport(now: Date = Date()) async throws -> URL {
         let report = try await makeReport(now: now)
-        let name = "Lume-Diagnostics-\(Self.fileStamp.string(from: now)).txt"
+        let name = "IPTVX-Diagnostics-\(Self.fileStamp.string(from: now)).txt"
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
         try report.write(to: url, atomically: true, encoding: .utf8)
         return url
@@ -111,7 +111,7 @@ nonisolated struct DebugLogExporter {
         [
             "Lume Diagnostic Log",
             "===================",
-            "App: Lume \(metadata.appVersion) (build \(metadata.buildNumber))",
+            "App: IPTVX \(metadata.appVersion) (build \(metadata.buildNumber))",
             "Platform: \(metadata.platform) \(metadata.osVersion)",
             "Device: \(metadata.deviceModel)",
             "Player engines: \(metadata.engineSummary)",
