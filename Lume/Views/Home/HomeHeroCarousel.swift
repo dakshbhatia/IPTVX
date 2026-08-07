@@ -44,7 +44,14 @@ struct HomeHeroCarousel: View {
     private static let headCloneID = "hero-clone-head"
     private static let tailCloneID = "hero-clone-tail"
 
-    private let heroHeight: CGFloat = 800
+    // Keep the page visually cinematic without making the first Home screen feel
+    // like a billboard. The content rail starts in the first viewport on a Mac,
+    // and remains reachable with one short scroll on iPhone.
+    #if os(iOS)
+        private let heroHeight: CGFloat = 560
+    #else
+        private let heroHeight: CGFloat = 640
+    #endif
 
     /// The rendered pages: the real items padded with a clone of the LAST item
     /// at the front and the FIRST at the back. Paging onto a clone is one slide;
@@ -89,9 +96,18 @@ struct HomeHeroCarousel: View {
 
             ZStack(alignment: .bottomLeading) {
                 artwork
+                // A neutral cinema vignette, rather than a coloured gradient:
+                // copy stays readable while the artwork remains the star.
+                LinearGradient(
+                    colors: [.black.opacity(0.92), .black.opacity(0.55), .clear],
+                    startPoint: .leading,
+                    endPoint: .center
+                )
+                .allowsHitTesting(false)
+
                 // Darken the bottom so the title and buttons stay legible.
                 LinearGradient(
-                    colors: [.clear, .black.opacity(0.15), .black.opacity(0.85)],
+                    colors: [.clear, .black.opacity(0.1), .black.opacity(0.82)],
                     startPoint: .center,
                     endPoint: .bottom
                 )

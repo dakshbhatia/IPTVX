@@ -73,40 +73,40 @@ struct LoginView: View {
                         .ignoresSafeArea()
 
                     #if os(macOS)
-                    setupContent
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                        .padding(.vertical, 28)
-                    #else
-                    ScrollView {
                         setupContent
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 28)
-                    }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                            .padding(.vertical, 28)
+                    #else
+                        ScrollView {
+                            setupContent
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 28)
+                        }
                     #endif
                 }
                 .navigationTitle("DBStream")
                 .preferredColorScheme(.dark)
                 #if os(macOS)
-                .toolbarBackground(Color.black, for: .windowToolbar)
-                .toolbarBackgroundVisibility(.visible, for: .windowToolbar)
+                    .toolbarBackground(Color.black, for: .windowToolbar)
+                    .toolbarBackgroundVisibility(.visible, for: .windowToolbar)
                 #endif
-                .toolbar {
-                    // Only offer Cancel when presented modally (the Settings
-                    // sheet). On first launch there is nothing to cancel to.
-                    if isModal {
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button("Cancel") { dismiss() }
-                                .disabled(isLoading)
+                    .toolbar {
+                        // Only offer Cancel when presented modally (the Settings
+                        // sheet). On first launch there is nothing to cancel to.
+                        if isModal {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Cancel") { dismiss() }
+                                    .disabled(isLoading)
+                            }
                         }
                     }
-                }
-                .interactiveDismissDisabled(isLoading)
-                .fileImporter(
-                    isPresented: $showFileImporter,
-                    allowedContentTypes: Self.playlistFileTypes
-                ) { result in
-                    handleFileImport(result)
-                }
+                    .interactiveDismissDisabled(isLoading)
+                    .fileImporter(
+                        isPresented: $showFileImporter,
+                        allowedContentTypes: Self.playlistFileTypes
+                    ) { result in
+                        handleFileImport(result)
+                    }
             }
         }
 
@@ -156,7 +156,7 @@ struct LoginView: View {
             }
             .frame(maxWidth: 520, alignment: .leading)
             #if os(macOS)
-            .frame(width: 520, alignment: .leading)
+                .frame(width: 520, alignment: .leading)
             #endif
         }
 
@@ -189,11 +189,6 @@ struct LoginView: View {
                 case .stalker:
                     stalkerFields
                 }
-
-                Text(connectionFooter)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .padding(.top, 2)
             }
             .playlistCinemaCard()
         }
@@ -203,17 +198,6 @@ struct LoginView: View {
             case .xtream: "Server Connection"
             case .m3u: "M3U Playlist"
             case .stalker: "Stalker Portal"
-            }
-        }
-
-        private var connectionFooter: LocalizedStringKey {
-            switch sourceType {
-            case .xtream:
-                "Your credentials are stored locally on this device."
-            case .m3u:
-                "Enter the playlist URL or choose a local m3u/m3u8 file. The EPG URL is read from the playlist when left empty."
-            case .stalker:
-                "Enter the portal URL and the MAC address your provider authorized. Most portals need only the portal URL and MAC."
             }
         }
 
@@ -323,92 +307,24 @@ struct LoginView: View {
     #endif
 
     #if os(tvOS)
-        private var stalkerHint: LocalizedStringKey {
-            switch sourceType {
-            case .xtream: "Your credentials are stored locally on this device."
-            case .m3u: "The EPG URL is read from the playlist when left empty."
-            case .stalker: "Enter the portal URL and the MAC address your provider authorized."
-            }
-        }
-
         private var tvBody: some View {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 28) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Add Playlist")
-                            .font(.system(size: 38, weight: .bold))
-                        Text("Connect to your IPTV provider")
-                            .font(.system(size: TVSettingsMetrics.secondaryFontSize))
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.horizontal, TVSettingsMetrics.rowHPadding)
-
-                    Picker("Playlist Type", selection: $sourceType) {
-                        Text("Xtream").tag(PlaylistSourceType.xtream)
-                        Text("M3U").tag(PlaylistSourceType.m3u)
-                        Text("Stalker").tag(PlaylistSourceType.stalker)
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal, TVSettingsMetrics.rowHPadding)
-
-                    VStack(spacing: 22) {
-                        TVSettingsField(title: "Name", placeholder: "e.g. My IPTV", text: $name, contentType: .name)
-                        switch sourceType {
-                        case .xtream:
-                            TVSettingsField(title: "Server URL", placeholder: "e.g. http://example.com:8080", text: $serverURL, contentType: .URL)
-                            TVSettingsField(title: "Username", placeholder: "Username", text: $username, contentType: .username)
-                            TVSettingsField(title: "Password", placeholder: "Password", text: $password, isSecure: true, contentType: .password)
-                        case .m3u:
-                            TVSettingsField(title: "Playlist URL", placeholder: "e.g. http://example.com/playlist.m3u", text: $m3uURL, contentType: .URL)
-                            TVSettingsField(title: "EPG URL (optional)", placeholder: "e.g. http://example.com/guide.xml", text: $epgURL, contentType: .URL)
-                        case .stalker:
-                            TVSettingsField(title: "Portal URL", placeholder: "e.g. http://example.com:8080/c/", text: $portalURL, contentType: .URL)
-                            TVSettingsField(title: "MAC Address", placeholder: "00:1A:79:xx:xx:xx", text: $macAddress, contentType: nil)
-                            TVSettingsField(title: "Username (optional)", placeholder: "Username", text: $username, contentType: .username)
-                            TVSettingsField(title: "Password (optional)", placeholder: "Password", text: $password, isSecure: true, contentType: .password)
-                        }
-                    }
-
-                    Text(stalkerHint)
-                        .font(.system(size: TVSettingsMetrics.secondaryFontSize))
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, TVSettingsMetrics.rowHPadding)
-
-                    if let errorMessage {
-                        Label(errorMessage, systemImage: "exclamationmark.circle.fill")
-                            .font(.system(size: TVSettingsMetrics.secondaryFontSize))
-                            .foregroundStyle(.red)
-                            .padding(.horizontal, TVSettingsMetrics.rowHPadding)
-                    }
-
-                    HStack(spacing: 16) {
-                        Button(action: addPlaylist) {
-                            if isLoading {
-                                ProgressView()
-                            } else {
-                                Label("Add Playlist", systemImage: "plus")
-                            }
-                        }
-                        .buttonStyle(TVSettingsActionButtonStyle(prominent: true))
-                        .disabled(!isFormValid || isLoading)
-
-                        // Only offer Cancel when presented modally (the Settings
-                        // cover); on first launch there is nothing to cancel to.
-                        if isModal {
-                            Button("Cancel") { dismiss() }
-                                .buttonStyle(TVSettingsActionButtonStyle())
-                                .disabled(isLoading)
-                        }
-                    }
-                    .padding(.top, 8)
-                    .padding(.horizontal, TVSettingsMetrics.rowHPadding)
-                }
-                .frame(maxWidth: TVSettingsMetrics.contentMaxWidth, alignment: .leading)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 48)
-                .padding(.vertical, 72)
-            }
-            .tvSettingsBackground()
+            TVLoginForm(
+                sourceType: $sourceType,
+                name: $name,
+                serverURL: $serverURL,
+                username: $username,
+                password: $password,
+                m3uURL: $m3uURL,
+                epgURL: $epgURL,
+                portalURL: $portalURL,
+                macAddress: $macAddress,
+                isFormValid: isFormValid,
+                isLoading: isLoading,
+                errorMessage: errorMessage,
+                isModal: isModal,
+                addPlaylist: addPlaylist,
+                dismiss: dismiss
+            )
         }
     #endif
 

@@ -20,11 +20,11 @@ struct HeroInfo: View {
             TitleLogo(
                 url: hero.logoURL,
                 title: hero.title,
-                maxWidth: isCompact ? 260 : 400,
-                maxHeight: isCompact ? 64 : 110
+                maxWidth: isCompact ? 280 : 470,
+                maxHeight: isCompact ? 72 : 120
             ) {
                 Text(hero.title)
-                    .font(isCompact ? .title2.weight(.bold) : .largeTitle.weight(.bold))
+                    .font(.system(size: isCompact ? 32 : 48, weight: .bold, design: .rounded))
                     .lineLimit(2)
                     .shadow(radius: 6)
             }
@@ -33,7 +33,7 @@ struct HeroInfo: View {
                 Text(hero.overview)
                     .font(.subheadline)
                     .lineLimit(2)
-                    .foregroundStyle(.white.opacity(0.85))
+                    .foregroundStyle(.white.opacity(0.76))
                     .shadow(radius: 4)
             }
 
@@ -42,13 +42,13 @@ struct HeroInfo: View {
                 .padding(.top, 4)
         }
         .foregroundStyle(.white)
-        .padding(.top, isCompact ? 16 : 24)
-        .padding(.horizontal, isCompact ? 16 : 24)
+        .padding(.top, isCompact ? 12 : 36)
+        .padding(.horizontal, isCompact ? 20 : 42)
         // Extra bottom inset so the button clears the page indicator instead
         // of colliding with it / clipping at the edge.
         .padding(.bottom, 56)
         // Cap the readable column on wide windows; fill when compact, pin leading.
-        .frame(maxWidth: isCompact ? .infinity : 640, alignment: .leading)
+        .frame(maxWidth: isCompact ? .infinity : 560, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -64,13 +64,13 @@ struct HeroInfo: View {
                 detailsLabel(fullWidth: fullWidth)
             }
             .buttonStyle(.bordered)
-            .tint(.white)
+            .tint(DBStreamVisual.primaryAction)
         } else if let series = hero.series {
             NavigationLink(value: series) {
                 detailsLabel(fullWidth: fullWidth)
             }
             .buttonStyle(.bordered)
-            .tint(.white)
+            .tint(DBStreamVisual.primaryAction)
         }
     }
 
@@ -79,4 +79,10 @@ struct HeroInfo: View {
             .fontWeight(.semibold)
             .frame(maxWidth: fullWidth ? .infinity : nil)
     }
+}
+
+/// A single, restrained brand action colour. It is used only for deliberate
+/// play/primary moments, leaving artwork and Liquid Glass surfaces uncluttered.
+enum DBStreamVisual {
+    static let primaryAction = Color(red: 0.92, green: 0.04, blue: 0.11)
 }

@@ -232,7 +232,7 @@ struct HomeView: View {
         if isSectionEnabled(section) {
             switch section {
             case .recentlyWatched:
-                rail("Recently Watched", recentlyWatched, onRemove: removeFromRecentlyWatched)
+                rail("Recently Watched", recentlyWatched, style: .landscape, onRemove: removeFromRecentlyWatched)
             case .favorites:
                 rail("Favorites", favorites)
             case .forYou:
@@ -268,10 +268,18 @@ struct HomeView: View {
     private func rail(
         _ title: LocalizedStringKey,
         _ items: [HomeMediaItem],
+        style: HomeRowStyle = .poster,
         onRemove: ((HomeMediaItem) -> Void)? = nil
     ) -> some View {
         if !items.isEmpty {
-            HomeRow(title: title, items: items, onPlayLive: playChannel, onRemove: onRemove, animationNamespace: animationNamespace)
+            HomeRow(
+                title: title,
+                items: items,
+                style: style,
+                onPlayLive: playChannel,
+                onRemove: onRemove,
+                animationNamespace: animationNamespace
+            )
         }
     }
 

@@ -97,7 +97,15 @@ final class EPGSyncService {
             }
             isSyncing = false
             task = nil
-            Logger.database.info("EPG refresh finished (success: \(succeeded))")
+            if succeeded {
+                Logger.database.info("EPG refresh finished successfully")
+            } else {
+                // `syncAllSources()` also returns false when the user has no
+                // enabled guide (or no matching channel IDs). That is an idle
+                // state, not a playback failure, so don't make diagnostics
+                // sound like a broken refresh.
+                Logger.database.info("EPG refresh completed with no guide data imported")
+            }
         }
     }
 }
