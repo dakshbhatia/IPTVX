@@ -43,9 +43,9 @@
                     }
                 }
             } header: {
-                Text("IPTVX")
+                Text("DBStream")
             } footer: {
-                Text("IPTVX is free, open-source software, licensed under the GNU Affero General Public License v3.")
+                Text("DBStream is free, open-source software, licensed under the GNU Affero General Public License v3.")
             }
         }
 
@@ -57,7 +57,7 @@
             } header: {
                 Text("Open Source")
             } footer: {
-                Text("IPTVX's playback engines build on these open-source projects. Each remains under its own license.")
+                Text("DBStream's playback engines build on these open-source projects. Each remains under its own license.")
             }
         }
 

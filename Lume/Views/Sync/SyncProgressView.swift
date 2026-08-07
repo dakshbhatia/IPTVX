@@ -23,6 +23,10 @@ struct SyncProgressView: View {
     /// shows a Done button when finished.
     let autoStart: Bool
 
+    /// An optional post-sync handoff for the automatic onboarding flow. The
+    /// sync view owns syncing; its presenter owns where the app goes next.
+    let onAutoSyncCompleted: (() -> Void)?
+
     /// Pulls the entire VOD/series catalog rather than the default recent
     /// slice. Only meaningful for Stalker portals (the "Download full catalog"
     /// action); other source types always sync fully and ignore it.
@@ -36,10 +40,16 @@ struct SyncProgressView: View {
     @State private var syncError: String?
     @State private var syncTask: Task<Void, Never>?
 
-    init(playlist: Playlist, autoStart: Bool = false, full: Bool = false) {
+    init(
+        playlist: Playlist,
+        autoStart: Bool = false,
+        full: Bool = false,
+        onAutoSyncCompleted: (() -> Void)? = nil
+    ) {
         self.playlist = playlist
         self.autoStart = autoStart
         self.full = full
+        self.onAutoSyncCompleted = onAutoSyncCompleted
         _progress = State(initialValue: SyncProgress(steps: SyncStep.steps(for: playlist.sourceType, full: full)))
         // Start already in the syncing state for auto-sync so the "Ready" screen
         // (with its Start button) never flashes before `.task` kicks off.
@@ -117,7 +127,10 @@ struct SyncProgressView: View {
                     phase = .finished
                     // Auto-sync gets out of the way as soon as it succeeds so the
                     // user can start browsing; the manual flow waits for Done.
-                    if autoStart { dismiss() }
+                    if autoStart {
+                        onAutoSyncCompleted?()
+                        dismiss()
+                    }
                 }
             } catch is CancellationError {
                 // User aborted — the sheet is being dismissed, nothing to show.

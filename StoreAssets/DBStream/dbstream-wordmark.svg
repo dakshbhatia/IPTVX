@@ -1,0 +1,7 @@
+<svg width="1200" height="280" viewBox="0 0 1200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M30 52H178C237 52 278 96 278 140C278 184 237 228 178 228H30V52Z" fill="#E50914"/>
+  <path d="M76 95H165C199 95 221 112 221 140C221 168 199 185 165 185H76V95Z" fill="#090A0C"/>
+  <path d="M110 113L181 140L110 167V113Z" fill="white"/>
+  <path d="M6 80H36M6 140H36M6 200H36" stroke="#090A0C" stroke-width="12" stroke-linecap="round"/>
+  <text x="330" y="184" fill="#090A0C" font-family="Arial, Helvetica, sans-serif" font-size="150" font-weight="700" letter-spacing="-7">DBStream</text>
+</svg>

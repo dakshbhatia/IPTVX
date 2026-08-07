@@ -86,7 +86,18 @@ struct MainTabView: View {
                     enqueueDueSyncs(playlists)
                 }
             }
-            .syncCover(item: $activeSyncPlaylist, onDismiss: promoteNextIfIdle)
+            .syncCover(
+                item: $activeSyncPlaylist,
+                onDismiss: promoteNextIfIdle,
+                onAutoSyncCompleted: { playlist in
+                    // A provider that only exposes live channels has nothing
+                    // meaningful for Home to show yet. Land the user in the
+                    // imported catalog rather than an empty personalized page.
+                    if playlist.sourceType == .m3u {
+                        router.selectedTab = .liveTV
+                    }
+                }
+            )
             .overlay {
                 if playlistSwitch?.isSwitching == true {
                     PlaylistSwitchOverlay(playlistName: playlistSwitch?.targetName ?? "")
@@ -274,15 +285,27 @@ private extension View {
     /// cover on iOS/tvOS (no swipe-to-dismiss), a sheet on macOS where
     /// `fullScreenCover` is unavailable.
     @ViewBuilder
-    func syncCover(item: Binding<Playlist?>, onDismiss: @escaping () -> Void) -> some View {
+    func syncCover(
+        item: Binding<Playlist?>,
+        onDismiss: @escaping () -> Void,
+        onAutoSyncCompleted: @escaping (Playlist) -> Void
+    ) -> some View {
         #if os(macOS)
             sheet(item: item, onDismiss: onDismiss) { playlist in
-                SyncProgressView(playlist: playlist, autoStart: true)
+                SyncProgressView(
+                    playlist: playlist,
+                    autoStart: true,
+                    onAutoSyncCompleted: { onAutoSyncCompleted(playlist) }
+                )
                     .frame(minWidth: 420, minHeight: 480)
             }
         #else
             fullScreenCover(item: item, onDismiss: onDismiss) { playlist in
-                SyncProgressView(playlist: playlist, autoStart: true)
+                SyncProgressView(
+                    playlist: playlist,
+                    autoStart: true,
+                    onAutoSyncCompleted: { onAutoSyncCompleted(playlist) }
+                )
             }
         #endif
     }

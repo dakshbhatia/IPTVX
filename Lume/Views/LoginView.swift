@@ -68,52 +68,28 @@ struct LoginView: View {
     #if !os(tvOS)
         private var formBody: some View {
             NavigationStack {
-                Form {
-                    Section {
-                        Picker("Playlist Type", selection: $sourceType) {
-                            Text("Xtream").tag(PlaylistSourceType.xtream)
-                            Text("M3U").tag(PlaylistSourceType.m3u)
-                            Text("Stalker").tag(PlaylistSourceType.stalker)
-                        }
-                        .pickerStyle(.segmented)
-                    }
+                ZStack {
+                    Color.black
+                        .ignoresSafeArea()
 
-                    switch sourceType {
-                    case .xtream: xtreamSection
-                    case .m3u: m3uSection
-                    case .stalker: stalkerSection
+                    #if os(macOS)
+                    setupContent
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .padding(.vertical, 28)
+                    #else
+                    ScrollView {
+                        setupContent
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 28)
                     }
-
-                    if let errorMessage {
-                        Section {
-                            Label(errorMessage, systemImage: "exclamationmark.circle.fill")
-                                .foregroundStyle(.red)
-                                .font(.callout)
-                        }
-                    }
-
-                    Section {
-                        Button(action: addPlaylist) {
-                            HStack {
-                                Spacer()
-                                if isLoading {
-                                    ProgressView()
-                                        .controlSize(.small)
-                                } else {
-                                    Text("Add Playlist")
-                                        .fontWeight(.semibold)
-                                }
-                                Spacer()
-                            }
-                        }
-                        .controlSize(.large)
-                        .disabled(!isFormValid || isLoading)
-                    }
+                    #endif
                 }
+                .navigationTitle("DBStream")
+                .preferredColorScheme(.dark)
                 #if os(macOS)
-                .formStyle(.grouped)
+                .toolbarBackground(Color.black, for: .windowToolbar)
+                .toolbarBackgroundVisibility(.visible, for: .windowToolbar)
                 #endif
-                .navigationTitle("Add Playlist")
                 .toolbar {
                     // Only offer Cancel when presented modally (the Settings
                     // sheet). On first launch there is nothing to cancel to.
@@ -134,10 +110,118 @@ struct LoginView: View {
             }
         }
 
-        private var xtreamSection: some View {
-            Section {
+        private var setupContent: some View {
+            VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Add your provider")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                }
+
+                playlistTypeCard
+                connectionCard
+
+                if let errorMessage {
+                    Label(errorMessage, systemImage: "exclamationmark.circle.fill")
+                        .font(.callout)
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(12)
+                        .background(Color.red.opacity(0.13), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(Color.red.opacity(0.35), lineWidth: 1)
+                        }
+                }
+
+                Button(action: addPlaylist) {
+                    HStack(spacing: 8) {
+                        if isLoading {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else {
+                            Image(systemName: "plus")
+                                .font(.body.weight(.bold))
+                        }
+                        Text("Add Playlist")
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.white)
+                .background(Color(red: 0.90, green: 0.04, blue: 0.10), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .opacity(isFormValid && !isLoading ? 1 : 0.45)
+                .disabled(!isFormValid || isLoading)
+            }
+            .frame(maxWidth: 520, alignment: .leading)
+            #if os(macOS)
+            .frame(width: 520, alignment: .leading)
+            #endif
+        }
+
+        private var playlistTypeCard: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("PLAYLIST TYPE")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+
+                Picker("Playlist Type", selection: $sourceType) {
+                    Text("Xtream").tag(PlaylistSourceType.xtream)
+                    Text("M3U").tag(PlaylistSourceType.m3u)
+                    Text("Stalker").tag(PlaylistSourceType.stalker)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+            }
+        }
+
+        private var connectionCard: some View {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(connectionTitle)
+                    .font(.title3.weight(.semibold))
+
+                switch sourceType {
+                case .xtream:
+                    xtreamFields
+                case .m3u:
+                    m3uFields
+                case .stalker:
+                    stalkerFields
+                }
+
+                Text(connectionFooter)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 2)
+            }
+            .playlistCinemaCard()
+        }
+
+        private var connectionTitle: LocalizedStringKey {
+            switch sourceType {
+            case .xtream: "Server Connection"
+            case .m3u: "M3U Playlist"
+            case .stalker: "Stalker Portal"
+            }
+        }
+
+        private var connectionFooter: LocalizedStringKey {
+            switch sourceType {
+            case .xtream:
+                "Your credentials are stored locally on this device."
+            case .m3u:
+                "Enter the playlist URL or choose a local m3u/m3u8 file. The EPG URL is read from the playlist when left empty."
+            case .stalker:
+                "Enter the portal URL and the MAC address your provider authorized. Most portals need only the portal URL and MAC."
+            }
+        }
+
+        private var xtreamFields: some View {
+            VStack(spacing: 8) {
                 TextField("e.g. My IPTV", text: $name)
                     .textContentType(.name)
+                    .playlistFieldSurface()
 
                 TextField("e.g. http://example.com:8080", text: $serverURL)
                 #if os(iOS)
@@ -146,6 +230,7 @@ struct LoginView: View {
                 #endif
                     .autocorrectionDisabled()
                     .textContentType(.URL)
+                    .playlistFieldSurface()
 
                 TextField("Username", text: $username)
                 #if os(iOS)
@@ -153,20 +238,19 @@ struct LoginView: View {
                 #endif
                     .autocorrectionDisabled()
                     .textContentType(.username)
+                    .playlistFieldSurface()
 
                 SecureField("Password", text: $password)
                     .textContentType(.password)
-            } header: {
-                Text("Server Connection")
-            } footer: {
-                Text("Your credentials are stored locally on this device.")
+                    .playlistFieldSurface()
             }
         }
 
-        private var m3uSection: some View {
-            Section {
+        private var m3uFields: some View {
+            VStack(spacing: 8) {
                 TextField("e.g. My IPTV", text: $name)
                     .textContentType(.name)
+                    .playlistFieldSurface()
 
                 TextField("e.g. http://example.com/playlist.m3u", text: $m3uURL)
                 #if os(iOS)
@@ -175,8 +259,11 @@ struct LoginView: View {
                 #endif
                     .autocorrectionDisabled()
                     .textContentType(.URL)
+                    .playlistFieldSurface()
 
                 Button("Choose Local File…") { showFileImporter = true }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 4)
 
                 TextField("EPG URL (optional)", text: $epgURL)
                 #if os(iOS)
@@ -185,17 +272,15 @@ struct LoginView: View {
                 #endif
                     .autocorrectionDisabled()
                     .textContentType(.URL)
-            } header: {
-                Text("M3U Playlist")
-            } footer: {
-                Text("Enter the playlist URL or choose a local m3u/m3u8 file. The EPG URL is read from the playlist when left empty.")
+                    .playlistFieldSurface()
             }
         }
 
-        private var stalkerSection: some View {
-            Section {
+        private var stalkerFields: some View {
+            VStack(spacing: 8) {
                 TextField("e.g. My IPTV", text: $name)
                     .textContentType(.name)
+                    .playlistFieldSurface()
 
                 TextField("e.g. http://example.com:8080/c/", text: $portalURL)
                 #if os(iOS)
@@ -204,6 +289,7 @@ struct LoginView: View {
                 #endif
                     .autocorrectionDisabled()
                     .textContentType(.URL)
+                    .playlistFieldSurface()
 
                 HStack {
                     TextField("MAC Address", text: $macAddress)
@@ -219,6 +305,7 @@ struct LoginView: View {
                     .buttonStyle(.borderless)
                     .accessibilityLabel("Generate a new MAC address")
                 }
+                .playlistFieldSurface()
 
                 TextField("Username (optional)", text: $username)
                 #if os(iOS)
@@ -226,13 +313,11 @@ struct LoginView: View {
                 #endif
                     .autocorrectionDisabled()
                     .textContentType(.username)
+                    .playlistFieldSurface()
 
                 SecureField("Password (optional)", text: $password)
                     .textContentType(.password)
-            } header: {
-                Text("Stalker Portal")
-            } footer: {
-                Text("Enter the portal URL and the MAC address your provider authorized. Most portals need only the portal URL and MAC.")
+                    .playlistFieldSurface()
             }
         }
     #endif
@@ -364,7 +449,7 @@ struct LoginView: View {
                     playlist.maxConnections = String(info.userInfo.maxConnections ?? "0")
                     playlist.activeConnections = String(info.userInfo.activeCons ?? "0")
                     playlist.expDate = info.userInfo.expDate
-                    insertAndFinish(playlist)
+                    try insertAndFinish(playlist)
                 }
             } catch {
                 errorMessage = error.localizedDescription
@@ -377,26 +462,17 @@ struct LoginView: View {
         isLoading = true
         errorMessage = nil
 
-        let playlistName = trimmedName.isEmpty ? "My Playlist" : trimmedName
-        // Rewrite Xtream bouquet types (type=gigablue/dreambox → m3u_plus) up
-        // front so the stored URL is the one that actually parses.
-        let urlString = M3UClient.normalizedPlaylistURL(m3uURL.trimmingCharacters(in: .whitespacesAndNewlines))
-        let epgURLString = epgURL.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        Task {
-            do {
-                try await withConnectionTimeout {
-                    // Cheap validation: stream just the head of the file and check
-                    // for m3u markers, so adding a huge playlist stays instant —
-                    // the full download happens during the first sync.
-                    try await M3UClient().validatePlaylist(at: urlString)
-                    let playlist = Playlist(name: playlistName, m3uURL: urlString, epgURL: epgURLString)
-                    insertAndFinish(playlist)
-                }
-            } catch {
-                errorMessage = error.localizedDescription
-                isLoading = false
-            }
+        do {
+            _ = try PlaylistOnboarding.addM3U(
+                name: name,
+                playlistURL: m3uURL,
+                epgURL: epgURL,
+                in: modelContext
+            )
+            finishAddingPlaylist()
+        } catch {
+            errorMessage = error.localizedDescription
+            isLoading = false
         }
     }
 
@@ -424,7 +500,7 @@ struct LoginView: View {
                     let profile = try await client.authenticate()
                     playlist.userStatus = profile.status
                     playlist.expDate = profile.expDate
-                    insertAndFinish(playlist)
+                    try insertAndFinish(playlist)
                 }
             } catch {
                 errorMessage = error.localizedDescription
@@ -433,16 +509,12 @@ struct LoginView: View {
         }
     }
 
-    private func insertAndFinish(_ playlist: Playlist) {
-        modelContext.insert(playlist)
-        // Set up the playlist's EPG source so the guide refreshes on its own
-        // schedule — EPG is no longer part of the content sync.
-        EPGSourceReconciler.reconcile(playlist, in: modelContext)
-        // Persist immediately so the ContentSyncManager actor's
-        // separate ModelContext can fetch the playlist. Without this
-        // the autosave is deferred and the sync's fresh context
-        // fetches nil, silently completing without syncing.
-        try? modelContext.save()
+    private func insertAndFinish(_ playlist: Playlist) throws {
+        try PlaylistOnboarding.persist(playlist, in: modelContext)
+        finishAddingPlaylist()
+    }
+
+    private func finishAddingPlaylist() {
         isLoading = false
         // Only dismiss when presented modally (e.g. the Settings
         // sheet). On first launch LoginView is the window's root
@@ -455,6 +527,36 @@ struct LoginView: View {
         }
     }
 }
+
+// MARK: - Cinema setup surfaces
+
+#if !os(tvOS)
+    private extension View {
+        /// A simple, low-contrast panel. The setup flow should feel like a
+        /// streaming app, not a dashboard full of floating glass widgets.
+        func playlistCinemaCard() -> some View {
+            padding(16)
+                .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(Color.white.opacity(0.10), lineWidth: 1)
+                }
+        }
+
+        /// Low, even field contrast makes long credentials easy to scan without
+        /// turning each row into another card.
+        func playlistFieldSurface() -> some View {
+            textFieldStyle(.plain)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(Color.white.opacity(0.075), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                }
+        }
+    }
+#endif
 
 // MARK: - Connection-test timeout
 

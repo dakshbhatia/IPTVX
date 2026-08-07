@@ -84,7 +84,7 @@ import SwiftUI
                             .background(.tint.opacity(0.12), in: .rect(cornerRadius: 14, style: .continuous))
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("IPTVX")
+                            Text("DBStream")
                                 .font(.system(size: 26, weight: .semibold))
                             Text("Version \(SupportInfo.appVersion)")
                                 .font(.system(size: 20))
@@ -110,7 +110,7 @@ import SwiftUI
             VStack(alignment: .leading, spacing: 16) {
                 TVSettingsSectionLabel("Acknowledgements")
 
-                Text("IPTVX is free, open-source software, licensed under the GNU Affero General Public License v3.")
+                Text("DBStream is free, open-source software, licensed under the GNU Affero General Public License v3.")
                     .font(.system(size: 22))
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, TVSettingsMetrics.rowHPadding)

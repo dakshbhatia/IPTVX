@@ -52,9 +52,15 @@ nonisolated struct LocalContentEntry {
 /// op routes to its own context; a reconcile saves both, then persists the shadow.
 actor CloudSyncEngine {
     /// The local-only catalog store (Playlist, Movie, Series, Episode, LiveStream).
-    let catalogContext: ModelContext
+    private let catalogContainer: ModelContainer
     /// The CloudKit-mirrored store (SyncedPlaylist, UserContentState, UserProfile).
-    let cloudContext: ModelContext
+    private let cloudContainer: ModelContainer
+    /// Created lazily on this actor, not in the main-actor coordinator's init.
+    /// A `ModelContext` is queue-bound and non-Sendable, so constructing one on
+    /// the main queue and later touching it here causes SwiftData's unbinding
+    /// warning and risks invalid store access.
+    private var storedCatalogContext: ModelContext?
+    private var storedCloudContext: ModelContext?
     let shadow: CloudSyncShadow
 
     /// The profile whose state the catalog currently projects. Read from
@@ -65,10 +71,8 @@ actor CloudSyncEngine {
     var activeProfileID = UserProfile.defaultProfileID
 
     init(catalogContainer: ModelContainer, cloudContainer: ModelContainer, shadow: CloudSyncShadow = CloudSyncShadow()) {
-        catalogContext = ModelContext(catalogContainer)
-        catalogContext.autosaveEnabled = false
-        cloudContext = ModelContext(cloudContainer)
-        cloudContext.autosaveEnabled = false
+        self.catalogContainer = catalogContainer
+        self.cloudContainer = cloudContainer
         self.shadow = shadow
     }
 
@@ -79,13 +83,30 @@ actor CloudSyncEngine {
         /// CloudKit's churn can't invalidate the catalog; the reconcile/merge logic
         /// the tests exercise routes identically either way.
         init(container: ModelContainer, shadow: CloudSyncShadow = CloudSyncShadow()) {
-            let ctx = ModelContext(container)
-            ctx.autosaveEnabled = false
-            catalogContext = ctx
-            cloudContext = ctx
+            catalogContainer = container
+            cloudContainer = container
             self.shadow = shadow
         }
     #endif
+
+    /// Both contexts are deliberately lazy. This actor is constructed by the
+    /// `@MainActor` coordinator, but the first reconciliation is executed here,
+    /// so this is the first safe point to bind a context to the actor's executor.
+    var catalogContext: ModelContext {
+        if let storedCatalogContext { return storedCatalogContext }
+        let context = ModelContext(catalogContainer)
+        context.autosaveEnabled = false
+        storedCatalogContext = context
+        return context
+    }
+
+    var cloudContext: ModelContext {
+        if let storedCloudContext { return storedCloudContext }
+        let context = ModelContext(cloudContainer)
+        context.autosaveEnabled = false
+        storedCloudContext = context
+        return context
+    }
 
     /// Run a full bidirectional reconcile: playlists first (so content can scope
     /// to the resulting live playlists), then per-content user state. Persists the

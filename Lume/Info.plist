@@ -4,6 +4,10 @@
 <dict>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
+	<key>CFBundleDisplayName</key>
+	<string>DBStream</string>
+	<key>CFBundleName</key>
+	<string>DBStream</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

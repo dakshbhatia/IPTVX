@@ -36,7 +36,7 @@
                     }
                     .onMove(perform: move)
                 } footer: {
-                    Text("IPTVX plays each stream with the first engine and automatically falls back to the next if it can't be played. Drag to reorder.")
+                    Text("DBStream plays each stream with the first engine and automatically falls back to the next if it can't be played. Drag to reorder.")
                 }
             }
             .platformNavigationTitle("Player Engines")
