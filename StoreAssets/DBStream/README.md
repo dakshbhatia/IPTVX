@@ -19,17 +19,17 @@ The PNG imagery is original concept art for DBStream marketing. Do not present i
 
 ## Draft App Store copy
 
-**Promotional text**  
+**Promotional text**
 Your streams. One beautiful place.
 
-**Description**  
+**Description**
 DBStream brings your own playlists together in one focused, cinematic player. Add an M3U playlist, Xtream connection, or Stalker portal, then browse live TV, movies, and series from a single private library.
 
 Fast search, favorites, watch history, profiles, picture in picture, and configurable playback engines keep the experience simple across iPhone, iPad, Mac, and Apple TV. Your provider credentials stay on your devices.
 
 DBStream does not provide channels or content. Use it with services and playlists you are authorized to access.
 
-**Keywords**  
+**Keywords**
 live tv,m3u,playlist,player,guide,streaming,channels,video,xtream
 
 ## Screenshot set to capture
